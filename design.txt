@@ -1,0 +1,1 @@
+UI has number buttons (0-9), operators, equals button, clear button, and display screen.
