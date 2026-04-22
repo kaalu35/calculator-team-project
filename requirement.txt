@@ -1,1 +1,54 @@
-Calculator web app supports +, -, *, /, decimals, chained operations, and division by zero handling.
+PROJECT: Online Food Ordering System
+
+OBJECTIVE:
+Build a system that allows users to browse restaurants, add food items to cart, place orders, and track order status.
+
+ACTORS:
+- Customer
+- Restaurant
+- Admin
+
+FUNCTIONAL_REQUIREMENTS:
+
+FR-001: User should be able to view list of restaurants
+INPUT: location
+EXPECTED_OUTPUT: list of restaurants
+
+FR-002: User should be able to view menu of a restaurant
+INPUT: restaurant_id
+EXPECTED_OUTPUT: list of food items
+
+FR-003: User should be able to add items to cart
+INPUT: item_id, quantity
+EXPECTED_OUTPUT: item added to cart
+
+FR-004: User should be able to place an order
+INPUT: cart_items, user_id
+EXPECTED_OUTPUT: order_id generated
+
+FR-005: User should be able to cancel order before confirmation
+INPUT: order_id
+EXPECTED_OUTPUT: order cancelled
+
+FR-006: System should update order status
+INPUT: order_id
+EXPECTED_OUTPUT: status = PLACED / PREPARING / DELIVERED
+
+FR-007: System should calculate total price
+INPUT: cart_items
+EXPECTED_OUTPUT: total_amount
+
+FR-008: System should handle empty cart
+INPUT: cart = empty
+EXPECTED_OUTPUT: error = "Cart is empty"
+
+FR-009: System should validate quantity
+INPUT: quantity <= 0
+EXPECTED_OUTPUT: error = "Invalid quantity"
+
+NON_FUNCTIONAL_REQUIREMENTS:
+
+NFR-001: Response time < 3 seconds
+NFR-002: System should support 500 concurrent users
+NFR-003: System should be available 99% uptime
+NFR-004: Data should be secure
