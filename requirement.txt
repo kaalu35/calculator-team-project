@@ -1,0 +1,1 @@
+Calculator web app supports +, -, *, /, decimals, chained operations, and division by zero handling.
