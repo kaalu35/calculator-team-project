@@ -14,7 +14,7 @@ MODULES:
    - Display products
    - Add/remove items
 
-3. Cart Module
+3. Cart Modul
    - Show selected items
 
 4. Checkout Module
