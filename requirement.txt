@@ -1,4 +1,4 @@
-PROJECT: E-Commerce UI Application (SauceDemo)
+PROJECT: E-Commerce UI Application (SauceDemo
 
 BASE_URL: https://www.saucedemo.com/
 
