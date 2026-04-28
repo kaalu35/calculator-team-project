@@ -1,51 +1,117 @@
-SYSTEM_DESIGN: E-Commerce UI Application
+# System Design - Demo Web Shop
 
-ARCHITECTURE:
+## 1. Architecture
 
-User → Browser → Web UI → Backend Services
+* Client-Server Architecture
+* Frontend: HTML, CSS, JavaScript
+* Backend: ASP.NET (nopCommerce)
+* Database: SQL Server
 
-MODULES:
+---
 
-1. Login Module
-   - Accept credentials
-   - Validate login
+## 2. Navigation Flow
 
-2. Product Module
-   - Display products
-   - Add/remove items
+Home → Login/Register → Product → Cart → Checkout → Order
 
-3. Cart Modul
-   - Show selected items
+---
 
-4. Checkout Module
-   - Capture user details
-   - Complete purchase
+## 3. UI Layout
 
-5. Logout Module
-   - End session
+### Header
 
-FLOW:
+* Logo
+* Search bar
+* Login/Register
+* Cart icon
 
-1. User opens website
-2. User logs in
-3. User views products
-4. User adds item to cart
-5. User opens cart
-6. User proceeds to checkout
-7. User completes order
-8. User logs out
+### Footer
 
-PSEUDOCODE:
+* Navigation links
+* Contact info
 
-function login(username, password):
-    if valid(username, password):
-        navigate_to_products()
-    else:
-        show_error()
+---
 
-function add_to_cart(product):
-    click_add_button(product)
+## 4. Component Design
 
-function checkout():
-    fill_details()
-    confirm_order()
+### Login Component
+
+Selectors:
+
+* Email → #Email
+* Password → #Password
+* Login Button
+
+---
+
+### Registration Component
+
+* Input fields
+* Submit button
+* Validation messages
+
+---
+
+### Product Component
+
+* Product title
+* Price
+* Add to cart button
+
+---
+
+### Cart Component
+
+* Product list
+* Quantity input
+* Remove option
+* Update button
+
+---
+
+## 5. Data Flow Example (Add to Cart)
+
+1. User clicks "Add to cart"
+2. Request sent to server
+3. Cart updated
+4. UI refreshed
+
+---
+
+## 6. State Management
+
+* Session-based authentication
+* Cart stored per session
+
+---
+
+## 7. API Design (Conceptual)
+
+* GET /products
+* POST /login
+* POST /cart/add
+* POST /checkout
+
+---
+
+## 8. Validation Rules
+
+| Field    | Rule             |
+| -------- | ---------------- |
+| Email    | Valid format     |
+| Password | Min 6 characters |
+| Quantity | > 0              |
+
+---
+
+## 9. Error Handling Design
+
+* Inline validation errors
+* Alert messages for failures
+
+---
+
+## 10. Testability Considerations
+
+* Unique selectors for elements
+* Stable page URLs
+* Predictable navigation flow
