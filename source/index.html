@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="app-container">
+        <header class="app-header">
+            <h1>Smart Calculator</h1>
+            <p>Standard Calculator with Calculation History</p>
+        </header>
+
+        <section class="calculator-layout">
+            <div class="calculator-card">
+                <div class="display-container">
+                    <div id="previous-operation" class="previous-operation"></div>
+                    <div id="calculator-display" class="calculator-display" aria-live="polite">0</div>
+                </div>
+
+                <div class="calculator-grid">
+                    <button class="calculator-button action-button" data-action="clear">AC</button>
+                    <button class="calculator-button action-button" data-action="delete">DEL</button>
+                    <button class="calculator-button action-button" data-action="percentage">%</button>
+                    <button class="calculator-button operator-button" data-operator="/">÷</button>
+
+                    <button class="calculator-button number-button" data-number="7">7</button>
+                    <button class="calculator-button number-button" data-number="8">8</button>
+                    <button class="calculator-button number-button" data-number="9">9</button>
+                    <button class="calculator-button operator-button" data-operator="*">×</button>
+
+                    <button class="calculator-button number-button" data-number="4">4</button>
+                    <button class="calculator-button number-button" data-number="5">5</button>
+                    <button class="calculator-button number-button" data-number="6">6</button>
+                    <button class="calculator-button operator-button" data-operator="-">−</button>
+
+                    <button class="calculator-button number-button" data-number="1">1</button>
+                    <button class="calculator-button number-button" data-number="2">2</button>
+                    <button class="calculator-button number-button" data-number="3">3</button>
+                    <button class="calculator-button operator-button" data-operator="+">+</button>
+
+                    <button class="calculator-button number-button zero-button" data-number="0">0</button>
+                    <button class="calculator-button number-button" data-number=".">.</button>
+                    <button class="calculator-button equals-button" data-action="calculate">=</button>
+                </div>
+
+                <div id="error-message" class="error-message" aria-live="assertive"></div>
+            </div>
+
+            <aside class="history-card">
+                <div class="history-header">
+                    <h2>History</h2>
+                    <button id="clear-history-button" class="clear-history-button">Clear History</button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <p class="empty-history">No calculations yet.</p>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
