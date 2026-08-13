@@ -1,1 +1,141 @@
-The Demo Web Shop application (https://demowebshop.tricentis.com/) is a web-based e-commerce platform that supports both guest and registered users, enabling them to browse product categories such as Books, Computers, Electronics, Apparel & Shoes, Digital Downloads, Jewelry, and Gift Cards, search for products using a keyword-based search bar, and view product details including name, description, price, and quantity selection. Users can register by providing mandatory details such as first name, last name, valid email, and password with confirmation, and log in using valid credentials (e.g., [testuser1@test.com](mailto:testuser1@test.com) / Test@123), with proper validation and error handling for invalid inputs. Once authenticated, users can add products to the shopping cart, update quantities, remove items, and view subtotal calculations. The application supports a multi-step checkout process including billing address, shipping address, shipping method, payment method, and order confirmation, where all mandatory fields must be validated before order placement. Users can also view their order history and details under the orders section. The system ensures proper session management (login/logout), displays meaningful error messages for invalid operations (such as login failure or empty cart checkout), and meets non-functional requirements including secure HTTPS communication, responsive UI, fast page load performance (less than 3 seconds), and usability through intuitive navigation and clearly identifiable UI elements.
+Smart Calculator - Software Requirements Specification
+Functional, non-functional, acceptance and test requirements
+Demo Application | Version 1.0 | 13 August 2026
+
+Application	Smart Calculator
+Purpose	Browser-based calculator used as a demo application for requirement-based testing.
+Target Users	General users, developers, testers and QA learners.
+Platform	Modern desktop and mobile web browsers.
+Technology Scope	HTML, CSS, JavaScript and browser localStorage. No backend or database server.
+1. Purpose and Scope
+The Smart Calculator provides standard arithmetic calculations, percentage conversion, input editing, keyboard interaction, persistent calculation history and safe error handling. The application is intentionally compact so that each requirement can be directly traced to UI behavior and code.
+1.1 In Scope
+Number entry from 0 through 9.
+Decimal input with one decimal point per operand.
+Addition, subtraction, multiplication and division.
+Percentage conversion of the current input by dividing it by 100.
+All Clear and Delete operations.
+Calculation history stored in browser localStorage.
+Reuse of a previous history result as the next input.
+Keyboard shortcuts for core operations.
+Responsive desktop and mobile layout.
+Error handling for division by zero and unsupported numeric results.
+1.2 Out of Scope
+User accounts or authentication.
+Backend APIs or server-side persistence.
+Scientific functions such as sin, cos, tan, logarithm and square root.
+Expression parsing with mathematical precedence.
+Currency or unit conversion.
+Cloud synchronization of history.
+2. Functional Requirements
+ID	Requirement	Description	Acceptance Example
+FR-001	Number Entry	The system shall allow the user to enter digits 0-9 using on-screen buttons or the keyboard.	Entering 123 displays 123.
+FR-002	Decimal Entry	The system shall allow one decimal point in the current operand and shall ignore additional decimal point attempts.	12.5 is valid; another decimal point does not change the value.
+FR-003	Addition	The system shall add two numeric operands.	100 + 50 = 150.
+FR-004	Subtraction	The system shall subtract the second operand from the first and support negative results.	5 - 10 = -5.
+FR-005	Multiplication	The system shall multiply two numeric operands.	12 x 5 = 60.
+FR-006	Division	The system shall divide the first operand by the second operand when the second operand is non-zero.	100 / 4 = 25.
+FR-007	Division by Zero	The system shall reject division by zero, display an error, and avoid recording an invalid calculation in history.	10 / 0 displays Cannot divide by zero.
+FR-008	Percentage	The system shall convert the current displayed number to percentage form by calculating current value / 100.	50% becomes 0.5; 200 x 10% becomes 20.
+FR-009	All Clear	The AC command shall reset the current input, pending operand, pending operator and temporary calculation state while preserving history.	After AC the display is 0 and history remains.
+FR-010	Delete	The DEL command shall remove the last character of the active input when input editing is allowed.	123 followed by DEL displays 12.
+FR-011	Equals	The equals command shall execute a complete pending binary operation.	20 + 30 = displays 50.
+FR-012	Sequential Chaining	Selecting a new operator after an existing complete operand/operator/operand sequence shall calculate the pending operation sequentially before storing the next operator.	10 + 20 x 5 = is evaluated sequentially as 150.
+FR-013	History Recording	Each successful completed calculation shall be inserted at the top of the calculation history.	Most recent successful calculation appears first.
+FR-014	History Limit	The application shall retain at most the 20 most recent history entries.	Entry 21 causes the oldest retained entry to be dropped.
+FR-015	History Persistence	Calculation history shall survive page refresh using browser localStorage.	Refresh does not remove prior successful calculations.
+FR-016	Clear History	The user shall be able to remove all saved history without resetting the current calculator input.	Clear History empties the history panel.
+FR-017	Reuse History Result	Selecting a history entry shall load its result as the current calculator input.	Clicking = 50 loads 50 into the display.
+FR-018	Keyboard Input	The application shall support digits, decimal, +, -, *, /, %, Enter or =, Backspace and Escape.	Keyboard behavior matches equivalent on-screen controls.
+FR-019	Input Length	The active input shall be limited to 16 characters and an explanatory message shall be displayed if the user attempts to exceed the limit.	A 17th character is not accepted.
+FR-020	Display Formatting	Calculated floating-point results shall be rounded to a maximum practical precision of 10 decimal places by the implementation.	0.1 + 0.2 displays 0.3.
+3. Business Rules and Calculation Rules
+Rule	Definition
+BR-001	All calculations are binary operations between a first operand and a second operand.
+BR-002	The calculator uses sequential evaluation, not algebraic operator precedence.
+BR-003	Percentage means current value divided by 100.
+BR-004	Division by zero is invalid and shall not produce Infinity or NaN as a user result.
+BR-005	A successful calculation is the only event that creates a history record.
+BR-006	History is local to the browser profile and device.
+BR-007	AC clears calculator state but not history; Clear History clears history but not calculator state.
+BR-008	When an operator is pressed twice before the next operand, the latest operator replaces the earlier pending operator.
+4. Non-Functional Requirements
+ID	Area	Requirement
+NFR-001	Usability	Core operations shall be understandable without training.
+NFR-002	Responsiveness	The layout shall adapt to desktop and mobile widths; calculator and history stack vertically on smaller screens.
+NFR-003	Performance	Normal button and keyboard interactions shall appear immediate for local calculations.
+NFR-004	Compatibility	The application shall run in current versions of Chrome, Edge and Firefox with JavaScript enabled.
+NFR-005	Accessibility	Dynamic result and error areas shall use live-region semantics; reusable history entries shall be keyboard accessible.
+NFR-006	Reliability	Invalid localStorage content shall not stop application startup; the app shall fall back to empty history.
+NFR-007	Security	The application shall not use eval() for calculation and shall render history through textContent rather than HTML injection.
+NFR-008	Maintainability	Calculator behavior shall be grouped in one SmartCalculator class with separate methods for input, calculation, persistence and rendering.
+5. User Interaction Requirements
+5.1 Mouse / Touch
+All visible calculator buttons are clickable/tappable.
+History items are selectable to reuse their result.
+Clear History removes saved entries.
+5.2 Keyboard Mapping
+Key	Action
+0-9	Digit entry
+.	Decimal point
++	Addition
+-	Subtraction
+*	Multiplication
+/	Division
+%	Percentage
+Enter or =	Calculate
+Backspace	Delete last character
+Escape	All Clear
+6. Acceptance Criteria
+AC-01: Digits 0-9 can be entered from UI and keyboard.
+AC-02: Only one decimal point can exist per operand.
+AC-03: Addition, subtraction, multiplication and division produce correct normal results.
+AC-04: Negative subtraction results are supported.
+AC-05: Division by zero displays an error and does not crash the application.
+AC-06: AC resets calculation state to 0 without deleting history.
+AC-07: DEL removes the last editable character.
+AC-08: Percentage converts the current input by dividing it by 100.
+AC-09: Successful calculations are recorded newest-first.
+AC-10: History survives browser refresh.
+AC-11: Clear History removes stored history.
+AC-12: A prior result can be loaded from history.
+AC-13: Keyboard shortcuts produce behavior equivalent to visible controls.
+AC-14: Inputs longer than 16 characters are restricted.
+AC-15: On small screens, calculator and history remain usable without horizontal page overflow.
+7. Requirement-Based Test Set
+Test ID	Requirement	Test Action	Expected Result
+TC-001	FR-003	10 + 20 =	30
+TC-002	FR-004	20 - 5 =	15
+TC-003	FR-004	5 - 10 =	-5
+TC-004	FR-005	5 x 10 =	50
+TC-005	FR-006	100 / 4 =	25
+TC-006	FR-007	10 / 0 =	Error: Cannot divide by zero.
+TC-007	FR-002,003	2.5 + 3.5 =	6
+TC-008	FR-002	Attempt 12.5.5	Second decimal is ignored.
+TC-009	FR-008	50 %	0.5
+TC-010	FR-008	200 x 10 % =	20
+TC-011	FR-009	Enter 100 then AC	Display returns to 0; history unchanged.
+TC-012	FR-010	Enter 123 then DEL	12
+TC-013	FR-013	10 + 10 =	History contains 10 + 10 = 20.
+TC-014	FR-015	Refresh after a successful calculation	History remains.
+TC-015	FR-016	Clear History	History list becomes empty.
+TC-016	FR-018	Keyboard: 10 + 20 Enter	30
+TC-017	FR-018	Enter 99 then Escape	0
+TC-018	FR-018	Enter 123 then Backspace	12
+TC-019	FR-019	Enter more than 16 characters	Input stays within 16 characters and message is shown.
+TC-020	FR-017	Click an old result of 50	Display loads 50.
+TC-021	FR-012	10 + 20 x 5 =	150 because evaluation is sequential.
+TC-022	FR-020	0.1 + 0.2 =	0.3
+8. Edge Cases for Exploratory Testing
+0 / 0
+10 / 0
+Repeated operator presses such as 10 + + + 5.
+Repeated decimal presses.
+Press = when no complete operation exists.
+Press DEL repeatedly until the display returns to 0.
+Corrupt smartCalculatorHistory manually in browser localStorage and refresh.
+Disable or block localStorage and verify the calculator itself remains usable.
+Use very small and very large decimal values.
+Resize the browser from desktop width to narrow mobile width.
+9. Traceability Summary
+The application can be tested by tracing each requirement ID to a visible control or JavaScript behavior. Functional requirements FR-001 through FR-020 are implemented in the files index.html, style.css and script.js supplied in the Code folder. The test cases above are intended as the first verification set; exploratory testing should be added for browser-specific and unusual numeric behavior.
