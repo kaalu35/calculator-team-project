@@ -1,117 +1,223 @@
-# System Design - Demo Web Shop
+Smart Calculator - Application Design Document
+UI design, component structure, state model, data flow and technical decisions
+Demo Application | Version 1.0 | 13 August 2026
 
-## 1. Architecture
+Architecture Style	Client-side single-page static web application
+Presentation	HTML + CSS
+Behavior	Vanilla JavaScript
+Persistence	Browser localStorage
+Backend	None
+Primary Design Goal	Simple, testable separation between UI controls, calculator state, calculation logic and history persistence.
+1. Design Goals
+Keep the demo runnable without installation or server setup.
+Keep calculator state explicit so test failures can be traced to specific state transitions.
+Avoid eval() and expression-string execution.
+Separate calculation, rendering, input handling and persistence responsibilities into methods.
+Provide enough edge cases to support manual and automated testing practice.
+Keep the UI responsive for desktop and mobile use.
+2. High-Level Architecture
+Calculator UI                 History UI
+     |                         |
+     +------------+------------+
+                  |
+                  v
+        SmartCalculator Controller
+                  |
+        +---------+---------+
+        |                   |
+        v                   v
+Calculation Logic      History Persistence
+(+ - x / %)            (localStorage)
+        |                   |
+        +---------+---------+
+                  |
+                  v
+               UI Render
+The browser is the complete runtime environment. User actions are captured by DOM event listeners. The SmartCalculator object updates its internal state, calculates results, persists successful history, and then renders the current state back into the DOM.
+3. Project Structure
+Smart_Calculator_Demo_Package/
+└── Code/
+    ├── index.html     UI structure and controls
+    ├── style.css      visual layout and responsive design
+    ├── script.js      state, input handling, calculation and history
+    └── README.txt     run instructions
+4. UI Design
+4.1 Desktop Wireframe
+DESKTOP LAYOUT
 
-* Client-Server Architecture
-* Frontend: HTML, CSS, JavaScript
-* Backend: ASP.NET (nopCommerce)
-* Database: SQL Server
+CALCULATOR                                  HISTORY
++--------------------------------+         +----------------------+
+| Previous operation             |         | 20 + 30              |
+|                            150 |         | = 50                 |
++--------------------------------+         |                      |
+| AC | DEL |  %  |  /            |         | 10 x 5               |
+|  7 |  8  |  9  |  x            |         | = 50                 |
+|  4 |  5  |  6  |  -            |         |                      |
+|  1 |  2  |  3  |  +            |         | [Clear History]      |
+|      0    |  .  |  =            |         +----------------------+
++--------------------------------+
+4.2 Mobile Layout
+MOBILE LAYOUT
 
----
++------------------------------+
+|          CALCULATOR          |
+| display and controls         |
++------------------------------+
+               |
+               v
++------------------------------+
+|            HISTORY           |
+| saved calculations           |
++------------------------------+
+At widths of 768 px or less, CSS changes the two-column grid to a single column so the calculator appears first and history follows beneath it.
+5. Component Responsibilities
+Component	Responsibility	Design Detail
+index.html	View structure	Defines display, calculator buttons, error region, history panel and accessibility attributes.
+style.css	Presentation	Controls grid layout, button styles, display appearance, responsive stacking and interactive focus/hover feedback.
+SmartCalculator constructor	Initialization	Creates initial state, reads history, captures DOM references, binds events and renders the initial UI.
+inputNumber / inputDecimal	Input handling	Build the current operand and enforce the one-decimal rule.
+inputOperator	Operator handling	Stores or replaces an operator and performs sequential chaining when a previous operation is complete.
+performCalculation	Business logic	Implements +, -, *, / and divide-by-zero control.
+percentage	Business rule	Converts current display value to value / 100.
+calculate	Use-case orchestration	Executes a pending operation, formats result, records history and resets pending operator state.
+load/save/clearHistory	Persistence	Reads and writes the history array to localStorage.
+render / renderHistory	UI update	Updates DOM content from current application state.
+handleKeyboardInput	Keyboard adapter	Maps physical keys to the same calculator methods used by visible buttons.
+6. State Model
+State	Type	Initial Value	Purpose
+currentInput	String	0	Current editable/displayed operand or result.
+previousInput	Number or null	null	First operand waiting for a second operand.
+operator	String or null	null	Pending binary operator: +, -, *, /.
+waitingForOperand	Boolean	false	Signals that the next digit should start a new operand.
+lastCalculation	String	empty	Last completed expression shown in the secondary display.
+error	String or null	null	Current user-facing error state.
+history	Array	loaded from localStorage	Up to 20 saved successful calculations.
+6.1 Example State Transition
+Initial
+currentInput = "0"
+previousInput = null
+operator = null
 
-## 2. Navigation Flow
+User enters 100
+currentInput = "100"
 
-Home → Login/Register → Product → Cart → Checkout → Order
+User presses +
+previousInput = 100
+operator = "+"
+waitingForOperand = true
 
----
+User enters 50
+currentInput = "50"
+waitingForOperand = false
 
-## 3. UI Layout
+User presses =
+result = 150
+currentInput = "150"
+previousInput = null
+operator = null
+waitingForOperand = true
+history[0] = { expression: "100 + 50", result: "150" }
+7. Calculation Flow
+1. User enters a digit or decimal.
+   -> inputNumber/inputDecimal updates currentInput.
+   -> render updates the display.
 
-### Header
+2. User selects an operator.
+   -> inputOperator stores or replaces the pending operator.
+   -> If a prior operation is complete, it is calculated sequentially.
 
-* Logo
-* Search bar
-* Login/Register
-* Cart icon
+3. User presses %.
+   -> percentage converts currentInput to currentInput / 100.
+   -> render updates the display.
 
-### Footer
+4. User presses =.
+   -> calculate validates the pending operation.
+   -> performCalculation executes +, -, x or /.
 
-* Navigation links
-* Contact info
+5. On success:
+   -> format result.
+   -> save a history entry.
+   -> render the result.
 
----
-
-## 4. Component Design
-
-### Login Component
-
-Selectors:
-
-* Email → #Email
-* Password → #Password
-* Login Button
-
----
-
-### Registration Component
-
-* Input fields
-* Submit button
-* Validation messages
-
----
-
-### Product Component
-
-* Product title
-* Price
-* Add to cart button
-
----
-
-### Cart Component
-
-* Product list
-* Quantity input
-* Remove option
-* Update button
-
----
-
-## 5. Data Flow Example (Add to Cart)
-
-1. User clicks "Add to cart"
-2. Request sent to server
-3. Cart updated
-4. UI refreshed
-
----
-
-## 6. State Management
-
-* Session-based authentication
-* Cart stored per session
-
----
-
-## 7. API Design (Conceptual)
-
-* GET /products
-* POST /login
-* POST /cart/add
-* POST /checkout
-
----
-
-## 8. Validation Rules
-
-| Field    | Rule             |
-| -------- | ---------------- |
-| Email    | Valid format     |
-| Password | Min 6 characters |
-| Quantity | > 0              |
-
----
-
-## 9. Error Handling Design
-
-* Inline validation errors
-* Alert messages for failures
-
----
-
-## 10. Testability Considerations
-
-* Unique selectors for elements
-* Stable page URLs
-* Predictable navigation flow
+6. On error:
+   -> display a controlled message.
+   -> do not create a history entry.
+8. History Data Design
+History is serialized as a JSON array under the localStorage key smartCalculatorHistory.
+[
+  {
+    "id": 1723540000000,
+    "expression": "100 + 50",
+    "result": "150",
+    "createdAt": "2026-08-13T08:30:00.000Z"
+  }
+]
+Newest item is inserted at index 0.
+Only the first 20 records are retained.
+Malformed stored JSON is ignored and produces an empty history array.
+Results are rendered with textContent to avoid treating saved strings as HTML.
+9. Error Handling Design
+Condition	Location	Response	State Effect
+Division by zero	performCalculation	Return null and show Cannot divide by zero.	Do not create history.
+Invalid numeric input	inputOperator / percentage	Show Invalid number.	Do not advance state.
+Non-finite result	performCalculation	Show result-out-of-range message.	Do not record success.
+localStorage parse failure	loadHistory	Return empty array.	Calculator remains usable.
+localStorage write failure	saveHistory	Show storage error.	Calculation result remains visible.
+Input too long	limitInputLength	Truncate to 16 characters and show message.	Prevent uncontrolled display growth.
+10. Security and Safety Design
+No eval() or Function constructor is used to execute user-entered expressions.
+No network requests are made by the application.
+No personally identifiable information is collected.
+History entries are inserted into the DOM with textContent rather than innerHTML.
+Browser storage is treated as untrusted: JSON parsing is wrapped in error handling.
+11. Key Design Decisions
+Decision	Reason	Trade-off
+Sequential evaluation	Makes state management transparent for testing. 10 + 20 x 5 = evaluates as 150.	Does not match full scientific/algebraic precedence.
+Percentage = value / 100	Removes ambiguity and makes percentage independently testable.	Different from some physical calculator contextual-percent behavior.
+localStorage history	No backend needed; refresh persistence is available.	History is device/browser specific and can be cleared externally.
+Single controller class	Simple for a small demo; all relevant states are visible in one place.	A larger application should split state, services and views into modules.
+No frameworks	Application can be opened directly from disk.	Less representative of large production frontend architectures.
+12. Testability Design
+The design intentionally provides clean observation points for testing:
+Display text verifies numeric output.
+Secondary display verifies pending/last operation.
+Error region verifies rejected operations.
+History panel verifies successful persistence events.
+localStorage key verifies persistence directly in browser developer tools.
+Keyboard and button inputs share the same internal methods, allowing equivalence testing.
+Explicit state variables make debugging reproducible when stepping through script.js.
+13. Five-Step Stress Test of the Design
+13.1 Devil's Advocate
+A simple calculator still contains ambiguous behaviors: percentage semantics, repeated equals, negative direct input, operator precedence, numeric precision and extremely large values. These must be defined rather than assumed.
+13.2 Weak Links
+Floating-point precision.
+Browser localStorage availability.
+Sequential operator chaining.
+Very large numeric values.
+Repeated operator and equals behavior.
+Accessibility beyond basic keyboard support.
+13.3 Uncomfortable Questions
+What happens for 0 / 0?
+What happens if localStorage contains invalid JSON?
+Does 10 + + + 5 behave predictably?
+Can a user create an input longer than the display supports?
+What occurs if storage writes fail after a valid calculation?
+13.4 Real-World Comparison
+A production-grade calculator might use an expression parser, arbitrary-precision decimal library, scientific functions, automated unit/E2E testing, analytics and accessibility certification. Those capabilities are intentionally excluded from this learning demo.
+13.5 Upgrades
+Add expression parser with operator precedence.
+Add memory keys M+, M-, MR and MC.
+Add scientific mode.
+Add automated tests with a browser test framework.
+Modularize JavaScript into calculator-core, storage and UI modules.
+Add PWA support and offline installation.
+14. Design Verification Checklist
+Open index.html directly and verify the page renders without a server.
+Run every functional requirement test from the Requirements document.
+Inspect browser console for unhandled exceptions during normal and edge-case use.
+Inspect Application > Local Storage and verify the smartCalculatorHistory record.
+Resize to a narrow viewport and verify one-column layout.
+Verify calculator remains usable after manually corrupting the history storage value.
+Verify divide by zero produces a controlled error and no history entry.
+Verify 0.1 + 0.2 produces the formatted result 0.3.
+Verify keyboard shortcuts and visible buttons produce the same behavior.
