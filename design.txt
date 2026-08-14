@@ -220,4 +220,4 @@ A production-grade calculator might use an expression parser, arbitrary-precisio
 Verify calculator remains usable after manually corrupting the history storage value.
 Verify divide by zero produces a controlled error and no history entry.
 Verify 0.1 + 0.2 produces the formatted result 0.3.
-Verify keyboard shortcuts and visible buttons produce the same behavior.
+Verify keyboard shortcuts and visible buttons produce the same behavior..
